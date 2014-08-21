@@ -1,15 +1,36 @@
-## Put comments here that give an overall description of what your
-## functions do
+## This program creates a wrapper for a matrix objecg
+## It lets the matrix cache its own inverse, which gets flushed if 
+## the matrix changed in any way
 
-## Write a short comment describing this function
+## create a new matrix object that can hold on to it's inverse
 
 makeCacheMatrix <- function(x = matrix()) {
-
+  inverse <- NULL
+  set <- function(y) {
+    x <<- y
+    inverse <<-NULL
+  }
+  
+  get <- function() x
+  setinverse <- function(inv) inverse <<- inv
+  getinverse <- function() inverse
+  list(set=set, get=get, getinverse=getinverse, setinverse=setinverse)
 }
 
 
-## Write a short comment describing this function
+## find the matrix inverse, but used cached value if it is available
 
 cacheSolve <- function(x, ...) {
         ## Return a matrix that is the inverse of 'x'
+  inverse <- x$getinverse()
+  if (!is.null(inverse)) {
+    message("getting cached data")
+    return(inverse)
+  }
+  
+  data <- x$get()
+  inverse <- solve(data,...)
+  x$setinverse(inverse)
+  inverse
+  
 }
